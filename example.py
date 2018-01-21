@@ -1,10 +1,10 @@
 from coco2voc import *
 
 
-# Change paths to your local machine
-annotations_file = 'E:\Almog\DLProjectData\coco\\annotations_trainval2017\\annotations\\instances_val2017.json'
+# !!Change paths to your local machine!!
+annotations_file = 'E:\\coco\\annotations_trainval2017\\annotations\\instances_val2017.json'
 labels_target_folder = 'E:\\coco\\processed_data\\val_2017_labels\\'
-data_folder = 'E:\Almog\DLProjectData\coco\\val2017\\'
+data_folder = 'E:\\coco\\val2017\\'
 
 # Convert n=100 annotations
 coco2voc(annotations_file, labels_target_folder, n=100, compress=True)
