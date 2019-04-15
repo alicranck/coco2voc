@@ -3,11 +3,11 @@ from coco2voc import *
 
 def on_press(event):
     """
-    Keyboard interaction ,key `a` for next image, key `d` for last, key `t` segmentation toggle
+    Keyboard interaction ,key `a` for next image, key `d` for previous image, key `t` segmentation toggle
     :param event: :class:`~matplotlib.backend_bases.KeyEvent`, keyboard event
     :return: None
     """
-    global i, l, frames, segs, fplot, splot, fig, s_toggle
+    global i, l, frames, segs, fplot, splot, fig, ax, s_toggle, id_list, figsizes
 
     if event.key == 'd':
         i = (i+1) % l
@@ -25,7 +25,10 @@ def on_press(event):
     fplot.set_data(frames[i])
     splot.set_data(segs[i])
 
+    fig.set_size_inches(figsizes[i], forward=True)
     fig.canvas.draw()
+    ax.set_title(id_list[i])
+
     pass
 
 
@@ -37,7 +40,7 @@ if __name__ == '__main__':
 
 
     # Convert n=25 annotations
-    coco2voc(annotations_file, labels_target_folder, n=25, compress=True)
+    # coco2voc(annotations_file, labels_target_folder, n=25, compress=True)
 
     # Load an image with it's id segmentation and show
     coco = COCO(annotations_file)
@@ -51,23 +54,37 @@ if __name__ == '__main__':
     l = len(id_list)
     frames = []
     segs =[]
+    figsizes = []
     s_toggle = True
+    dpi = 100
 
     for id in id_list:
         # Get the image's file name and load image from data folder
         img_ann = coco.loadImgs(int(id))
+
         file_name = img_ann[0]['file_name']
-        frames.append(plt.imread(os.path.join(data_folder, file_name)))
+        im_data = plt.imread(os.path.join(data_folder, file_name))
+        height, width, depth = im_data.shape
+        frames.append(im_data)
+
+        size = width/float(dpi), height/float(dpi)
+        figsizes.append(size)
 
         # Load segmentation - note that the loaded '.npz' file is a dictionary, and the data is at key 'arr_0'
         id_seg = np.load(os.path.join(labels_target_folder, 'id_labels', id+'.npz'))
         segs.append(id_seg['arr_0'])
 
+
     # Show image with segmentations
-    fig, ax = plt.subplots()
+    fig, ax = plt.subplots(figsize=figsizes[0], dpi=dpi)
     fig.canvas.mpl_connect('key_press_event', on_press)
-    print(l)
-    fplot = ax.imshow(frames[i % l], aspect=1)
-    splot = ax.imshow(segs[i%l], alpha=0.4, aspect=1)
+
+    fplot = ax.imshow(frames[i%l])
+    splot = ax.imshow(segs[i%l], alpha=0.4)
+
+    ax.set_aspect(aspect='auto')# must after imshow
+
+    plt.tight_layout()
+    plt.axis('off')
     plt.show()
 
