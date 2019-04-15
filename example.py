@@ -2,6 +2,11 @@ from coco2voc import *
 
 
 def on_press(event):
+    """
+    Keyboard interaction ,key `a` for next image, key `d` for last, key `t` segmentation toggle
+    :param event: :class:`~matplotlib.backend_bases.KeyEvent`, keyboard event
+    :return: None
+    """
     global i, l, frames, segs, fplot, splot, fig, s_toggle
 
     if event.key == 'd':
