@@ -26,14 +26,15 @@ def coco2voc(anns_file, target_folder, n=None, compress=True):
         assert type(n) == int, "n must be an int"
         n = min(n, len(coco_imgs))
 
-    instance_target_path = target_folder+'instance_labels\\'
-    class_target_path = target_folder + 'class_labels\\'
-    id_target_path = target_folder + 'id_labels\\'
+    instance_target_path = os.path.join(target_folder, 'instance_labels')
+    class_target_path = os.path.join(target_folder, 'class_labels')
+    id_target_path = os.path.join(target_folder, 'id_labels')
+
     os.makedirs(instance_target_path, exist_ok=True)
     os.makedirs(class_target_path, exist_ok=True)
     os.makedirs(id_target_path, exist_ok=True)
 
-    image_id_list = open(target_folder+'images_ids.txt', 'a+')
+    image_id_list = open(os.path.join(target_folder, 'images_ids.txt'), 'a+')
     start = time.time()
 
     for i, img in enumerate(coco_imgs):
@@ -45,13 +46,14 @@ def coco2voc(anns_file, target_folder, n=None, compress=True):
 
         class_seg, instance_seg, id_seg = annsToSeg(anns, coco_instance)
         class_seg = np.dstack([class_seg]*3).astype(np.uint8)  # Stack to create an RGB image
-        plt.imsave(class_target_path+str(img)+'.png', class_seg)
-        plt.imsave(instance_target_path + str(img) + '.png', instance_seg, cmap=plt.get_cmap('inferno'))
+
+        plt.imsave(os.path.join(class_target_path,str(img)+'.png'), class_seg)
+        plt.imsave(os.path.join(instance_target_path,str(img)+'.png'), instance_seg, cmap=plt.get_cmap('inferno'))
 
         if compress:
-            np.savez_compressed(id_target_path + str(img), id_seg)
+            np.savez_compressed(os.path.join(id_target_path, str(img)), id_seg)
         else:
-            np.save(id_target_path + str(img) + '.npy', id_seg)
+            np.save(os.path.join(id_target_path, str(img)+'.npy'), id_seg)
 
         image_id_list.write(str(img)+'\n')
 
