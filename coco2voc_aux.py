@@ -20,9 +20,9 @@ def annsToSeg(anns, coco_instance):
     id_seg = np.zeros((h, w))
     masks, anns = annsToMask(anns, h, w)
 
-    for i,mask in enumerate(masks):
+    for i, mask in enumerate(masks):
         class_seg = np.where(class_seg>0, class_seg, mask*anns[i]['category_id'])
-        instance_seg = np.where(instance_seg>0, instance_seg, mask*i)
+        instance_seg = np.where(instance_seg>0, instance_seg, mask*(i+1))
         id_seg = np.where(id_seg > 0, id_seg, mask * anns[i]['id'])
 
     return class_seg, instance_seg, id_seg.astype(np.int64)
