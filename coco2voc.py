@@ -1,5 +1,6 @@
 from pycocotools.coco import COCO
 from coco2voc_aux import *
+from PIL import Image
 import matplotlib.pyplot as plt
 import os
 import time
@@ -45,11 +46,10 @@ def coco2voc(anns_file, target_folder, n=None, compress=True):
             continue
 
         class_seg, instance_seg, id_seg = annsToSeg(anns, coco_instance)
-        class_seg = np.dstack([class_seg]*3).astype(np.uint8)  # Stack to create an RGB image
 
-        plt.imsave(os.path.join(class_target_path,str(img)+'.png'), class_seg)
-        plt.imsave(os.path.join(instance_target_path,str(img)+'.png'), instance_seg, cmap=plt.get_cmap('inferno'))
-
+        Image.fromarray(class_seg).convert("L").save(class_target_path + '/' + str(img) + '.png')
+        Image.fromarray(instance_seg).convert("L").save(instance_target_path + '/' + str(img) + '.png')
+        
         if compress:
             np.savez_compressed(os.path.join(id_target_path, str(img)), id_seg)
         else:
