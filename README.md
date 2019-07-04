@@ -5,7 +5,7 @@ Requires pycocotools (see https://github.com/cocodataset/cocoapi). Also, the met
 
 Use this to convert the COCO style JSON annotation files to PASCAL VOC style instance and class segmentations in a PNG format. This can be useful when some preprocessing (cropping, rotating, etc.) is required, where it is more convenient to have the labels as images as well.
 
-Class segmentation is an RGB image where each pixel value is (class_id, class_id, class_id). This results in greyscale images that are not visually convenient, but makes more sense when used in training. It is recommended to load the images with PIL so that the values are not normalized.
+Class segmentations are an 8-bit PNG images with each pixel value corresponding to the class id of the object in the pixel (https://tech.amikelive.com/node-718/what-object-categories-labels-are-in-coco-dataset/). This results in greyscale images that are not visually convenient, but makes more sense when used in training. It is recommended to load the images with PIL so that the values are not normalized (see example code).
 
 In addition to the class and instance segmentations, this also creates an 'ID segmentation' which is a 1-D numpy array in the dimensions of the original image, where the [i, j] cell contains the id of the object at the [i, j] pixel of the image. This can be used to get other information that is not given by the class and instance segmentations (such as bounding boxes etc.).
 
