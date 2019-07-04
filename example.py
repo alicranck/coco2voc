@@ -1,5 +1,5 @@
 from coco2voc import *
-
+from PIL import Image
 
 def on_press(event):
     """
@@ -40,7 +40,7 @@ if __name__ == '__main__':
 
 
     # Convert n=25 annotations
-    # coco2voc(annotations_file, labels_target_folder, n=25, compress=True)
+    coco2voc(annotations_file, labels_target_folder, n=25, compress=True)
 
     # Load an image with it's id segmentation and show
     coco = COCO(annotations_file)
@@ -71,8 +71,14 @@ if __name__ == '__main__':
         figsizes.append(size)
 
         # Load segmentation - note that the loaded '.npz' file is a dictionary, and the data is at key 'arr_0'
-        id_seg = np.load(os.path.join(labels_target_folder, 'id_labels', id+'.npz'))
+        id_seg = np.load(os.path.join(labels_target_folder, 'id_labels', id +'.npz'))
         segs.append(id_seg['arr_0'])
+        
+        # Example for loading class or instance segmentations
+        instance_filename = os.path.join(labels_target_folder, 'instance_labels', id +'.png')
+        class_filename = os.path.join(labels_target_folder, 'class_labels', id +'.png')
+        instance_seg = np.array(Image.open(instance_filename))
+        class_seg = np.array(Image.open(class_filename))
 
 
     # Show image with segmentations
