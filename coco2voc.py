@@ -1,10 +1,11 @@
 import os
 import time
 
+import numpy as np
 from PIL import Image
 from pycocotools.coco import COCO
 
-from coco2voc_aux import *
+from coco2voc_aux import annotations_to_seg
 
 
 def coco2voc(annotations_file: str, target_folder: str, n: int = None, apply_border: bool = False,
@@ -70,13 +71,3 @@ def coco2voc(annotations_file: str, target_folder: str, n: int = None, apply_bor
 
     image_id_list.close()
     return
-
-
-
-
-
-
-
-
-
-
