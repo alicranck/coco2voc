@@ -1,8 +1,11 @@
+from typing import Sequence
+
 import numpy as np
-from pycocotools import mask as maskUtils
+from pycocotools import mask as mask_utils
+from pycocotools.coco import COCO
 
 
-def annotations_to_seg(annotations, coco_instance):
+def annotations_to_seg(annotations: Sequence[dict], coco_instance: COCO):
     """
     converts COCO-format annotations of a given image to a PASCAL-VOC segmentation style label
      !!!No guarantees where segmentations overlap - might lead to loss of objects!!!
@@ -28,7 +31,7 @@ def annotations_to_seg(annotations, coco_instance):
     return class_seg, instance_seg, id_seg.astype(np.int64)
 
 
-def annotation_to_rle(ann, h, w):
+def annotation_to_rle(ann: dict, h: int, w: int):
     """
     Convert annotation which can be polygons, uncompressed RLE to RLE.
     :return: binary mask (numpy 2D array)
@@ -37,16 +40,16 @@ def annotation_to_rle(ann, h, w):
     if type(segm) == list:
         # polygon -- a single object might consist of multiple parts
         # we merge all parts into one mask rle code
-        rles = maskUtils.frPyObjects(segm, h, w)
-        rle = maskUtils.merge(rles)
+        rles = mask_utils.frPyObjects(segm, h, w)
+        rle = mask_utils.merge(rles)
     elif type(segm['counts']) == list:
-        rle = maskUtils.frPyObjects(segm, h, w)  # Uncompressed RLE
+        rle = mask_utils.frPyObjects(segm, h, w)  # Uncompressed RLE
     else:
         rle = ann['segmentation']  # RLE
     return rle
 
 
-def annotations_to_mask(annotations, h, w):
+def annotations_to_mask(annotations: Sequence[dict], h: int, w: int):
     """
     Convert annotations which can be polygons, uncompressed RLE, or RLE to binary masks.
     :return: a list of binary masks (each a numpy 2D array) of all the annotations in anns
@@ -56,6 +59,6 @@ def annotations_to_mask(annotations, h, w):
     annotations = sorted(annotations, key=lambda x: x['area'])
     for ann in annotations:
         rle = annotation_to_rle(ann, h, w)
-        m = maskUtils.decode(rle)
+        m = mask_utils.decode(rle)
         masks.append(m)
     return masks, annotations
