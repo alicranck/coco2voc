@@ -1,24 +1,27 @@
-from pycocotools.coco import COCO
-from coco2voc_aux import *
-from PIL import Image
-import matplotlib.pyplot as plt
 import os
 import time
 
+from PIL import Image
+from pycocotools.coco import COCO
 
-def coco2voc(anns_file, target_folder, n=None, compress=True):
+from coco2voc_aux import *
+
+
+def coco2voc(annotations_file, target_folder, n=None, compress=True):
     '''
     This function converts COCO style annotations to PASCAL VOC style instance and class
         segmentations. Additionaly, it creates a segmentation mask(1d ndarray) with every pixel contatining the id of
         the instance that the pixel belongs to.
-    :param anns_file: COCO annotations file, as given in the COCO data set
-    :param Target_folder: path to the folder where the results will be saved
+    :param annotations_file: COCO annotations file, as given in the COCO data set
+    :param target_folder: path to the folder where the results will be saved
     :param n: Number of image annotations to convert. Default is None in which case all of the annotations are converted
-    :param compress: if True, id segmentation masks are saved as '.npz' compressed files. if False they are saved as '.npy'
-    :return: All segmentations are saved to the target folder, along with a list of ids of the images that were converted
+    :param compress: if True, id segmentation masks are saved as '.npz' compressed files. if False they are saved as
+    '.npy'
+    :return: All segmentations are saved to the target folder, along with a list of ids of the images that were
+    converted
     '''
 
-    coco_instance = COCO(anns_file)
+    coco_instance = COCO(annotations_file)
     coco_imgs = coco_instance.imgs
 
     if n is None:
@@ -40,12 +43,12 @@ def coco2voc(anns_file, target_folder, n=None, compress=True):
 
     for i, img in enumerate(coco_imgs):
 
-        anns_ids = coco_instance.getAnnIds(img)
-        anns = coco_instance.loadAnns(anns_ids)
-        if not anns:
+        annotation_ids = coco_instance.getAnnIds(img)
+        annotations = coco_instance.loadAnns(annotation_ids)
+        if not annotations:
             continue
 
-        class_seg, instance_seg, id_seg = annsToSeg(anns, coco_instance)
+        class_seg, instance_seg, id_seg = anns_to_seg(annotations, coco_instance)
 
         Image.fromarray(class_seg).convert("L").save(class_target_path + '/' + str(img) + '.png')
         Image.fromarray(instance_seg).convert("L").save(instance_target_path + '/' + str(img) + '.png')
@@ -57,10 +60,10 @@ def coco2voc(anns_file, target_folder, n=None, compress=True):
 
         image_id_list.write(str(img)+'\n')
 
-        if i%100==0 and i>0:
-            print(str(i)+" annotations processed" +
-                  " in "+str(int(time.time()-start)) + " seconds")
-        if i>=n:
+        if i % 100 == 0 and i > 0:
+            print(str(i) + " annotations processed" +
+                  " in " + str(int(time.time()-start)) + " seconds")
+        if i >= n:
             break
 
     image_id_list.close()
