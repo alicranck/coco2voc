@@ -7,7 +7,8 @@ from pycocotools.coco import COCO
 from coco2voc_aux import *
 
 
-def coco2voc(annotations_file: str, target_folder: str, n: int = None, compress: bool = True):
+def coco2voc(annotations_file: str, target_folder: str, n: int = None, apply_border: bool = False,
+             compress: bool = True):
     """
     This function converts COCO style annotations to PASCAL VOC style instance and class
         segmentations. Additionaly, it creates a segmentation mask(1d ndarray) with every pixel contatining the id of
@@ -15,6 +16,7 @@ def coco2voc(annotations_file: str, target_folder: str, n: int = None, compress:
     :param annotations_file: COCO annotations file, as given in the COCO data set
     :param target_folder: path to the folder where the results will be saved
     :param n: Number of image annotations to convert. Default is None in which case all of the annotations are converted
+    :param apply_border: Whether to add a void (255) border region around the masks or not
     :param compress: if True, id segmentation masks are saved as '.npz' compressed files. if False they are saved as
     '.npy'
     :return: All segmentations are saved to the target folder, along with a list of ids of the images that were
@@ -48,7 +50,7 @@ def coco2voc(annotations_file: str, target_folder: str, n: int = None, compress:
         if not annotations:
             continue
 
-        class_seg, instance_seg, id_seg = annotations_to_seg(annotations, coco_instance)
+        class_seg, instance_seg, id_seg = annotations_to_seg(annotations, coco_instance, apply_border)
 
         Image.fromarray(class_seg).convert("L").save(class_target_path + '/' + str(img) + '.png')
         Image.fromarray(instance_seg).convert("L").save(instance_target_path + '/' + str(img) + '.png')

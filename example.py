@@ -37,12 +37,12 @@ def on_press(event):
 
 if __name__ == '__main__':
     # !!Change paths to your local machine!!
-    annotations_file = '/home/dl/1TB-Volumn/MSCOCO2017/annotations/instances_train2017.json'
-    labels_target_folder = '/home/dl/PycharmProjects/coco2voc-master/output'
-    data_folder = '/home/dl/1TB-Volumn/MSCOCO2017/train2017'
+    annotations_file = r'/home/alicranck/almog/coco2voc/annotations_trainval2017/annotations/instances_val2017.json'
+    labels_target_folder = r'/home/alicranck/almog/coco2voc/outputs'
+    data_folder = '/home/alicranck/almog/coco2voc/val2017'
 
     # Convert n=25 annotations
-    coco2voc(annotations_file, labels_target_folder, n=25, compress=True)
+    coco2voc(annotations_file, labels_target_folder, n=25, apply_border=True, compress=True)
 
     # Load an image with its id segmentation and show
     coco = COCO(annotations_file)
