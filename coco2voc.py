@@ -48,7 +48,7 @@ def coco2voc(annotations_file, target_folder, n=None, compress=True):
         if not annotations:
             continue
 
-        class_seg, instance_seg, id_seg = anns_to_seg(annotations, coco_instance)
+        class_seg, instance_seg, id_seg = annotations_to_seg(annotations, coco_instance)
 
         Image.fromarray(class_seg).convert("L").save(class_target_path + '/' + str(img) + '.png')
         Image.fromarray(instance_seg).convert("L").save(instance_target_path + '/' + str(img) + '.png')
