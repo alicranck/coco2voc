@@ -25,7 +25,7 @@ def annotations_to_seg(annotations: Sequence[dict], coco_instance: COCO):
 
     for i, mask in enumerate(masks):
         class_seg = np.where(class_seg > 0, class_seg, mask * annotations[i]['category_id'])
-        instance_seg = np.where(instance_seg > 0, instance_seg, mask*(i+1))
+        instance_seg = np.where(instance_seg > 0, instance_seg, mask * (i+1))
         id_seg = np.where(id_seg > 0, id_seg, mask * annotations[i]['id'])
 
     return class_seg, instance_seg, id_seg.astype(np.int64)
