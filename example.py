@@ -1,5 +1,8 @@
-from coco2voc import *
+import matplotlib.pyplot as plt
 from PIL import Image
+
+from coco2voc import *
+
 
 def on_press(event):
     """
@@ -7,14 +10,14 @@ def on_press(event):
     :param event: :class:`~matplotlib.backend_bases.KeyEvent`, keyboard event
     :return: None
     """
-    global i, l, frames, segs, fplot, splot, fig, ax, s_toggle, id_list, figsizes
+    global i, n_images, frames, segs, fplot, splot, fig, ax, s_toggle, id_list, figsizes
 
     if event.key == 'd':
-        i = (i+1) % l
+        i = (i+1) % n_images
         s_toggle = True
         splot.set_alpha(0.4)
     elif event.key == 'a':
-        i = (i-1) % l
+        i = (i-1) % n_images
         s_toggle = True
         splot.set_alpha(0.4)
     elif event.key == 't':
@@ -38,11 +41,10 @@ if __name__ == '__main__':
     labels_target_folder = '/home/dl/PycharmProjects/coco2voc-master/output'
     data_folder = '/home/dl/1TB-Volumn/MSCOCO2017/train2017'
 
-
     # Convert n=25 annotations
     coco2voc(annotations_file, labels_target_folder, n=25, compress=True)
 
-    # Load an image with it's id segmentation and show
+    # Load an image with its id segmentation and show
     coco = COCO(annotations_file)
     path = os.path.join(labels_target_folder, 'images_ids.txt')
 
@@ -50,17 +52,15 @@ if __name__ == '__main__':
     with open(path) as f:
         id_list = [line.split()[0] for line in f]
 
-    i = 0
-    l = len(id_list)
-    frames = []
-    segs =[]
-    figsizes = []
     s_toggle = True
     dpi = 100
 
-    for id in id_list:
+    i = 0
+    n_images = len(id_list)
+    frames, segs, fig_sizes = [], [], []
+    for idx in id_list:
         # Get the image's file name and load image from data folder
-        img_ann = coco.loadImgs(int(id))
+        img_ann = coco.loadImgs(int(idx))
 
         file_name = img_ann[0]['file_name']
         im_data = plt.imread(os.path.join(data_folder, file_name))
@@ -68,27 +68,26 @@ if __name__ == '__main__':
         frames.append(im_data)
 
         size = width/float(dpi), height/float(dpi)
-        figsizes.append(size)
+        fig_sizes.append(size)
 
         # Load segmentation - note that the loaded '.npz' file is a dictionary, and the data is at key 'arr_0'
-        id_seg = np.load(os.path.join(labels_target_folder, 'id_labels', id +'.npz'))
+        id_seg = np.load(os.path.join(labels_target_folder, 'id_labels', idx + '.npz'))
         segs.append(id_seg['arr_0'])
         
         # Example for loading class or instance segmentations
-        instance_filename = os.path.join(labels_target_folder, 'instance_labels', id +'.png')
-        class_filename = os.path.join(labels_target_folder, 'class_labels', id +'.png')
+        instance_filename = os.path.join(labels_target_folder, 'instance_labels', idx + '.png')
+        class_filename = os.path.join(labels_target_folder, 'class_labels', idx + '.png')
         instance_seg = np.array(Image.open(instance_filename))
         class_seg = np.array(Image.open(class_filename))
 
-
     # Show image with segmentations
-    fig, ax = plt.subplots(figsize=figsizes[0], dpi=dpi)
+    fig, ax = plt.subplots(figsize=fig_sizes[0], dpi=dpi)
     fig.canvas.mpl_connect('key_press_event', on_press)
 
-    fplot = ax.imshow(frames[i%l])
-    splot = ax.imshow(segs[i%l], alpha=0.4)
+    fplot = ax.imshow(frames[i % n_images])
+    splot = ax.imshow(segs[i % n_images], alpha=0.4)
 
-    ax.set_aspect(aspect='auto')# must after imshow
+    ax.set_aspect(aspect='auto')  # must after imshow
 
     plt.tight_layout()
     plt.axis('off')
