@@ -8,7 +8,7 @@ from coco2voc_aux import *
 
 
 def coco2voc(annotations_file, target_folder, n=None, compress=True):
-    '''
+    """
     This function converts COCO style annotations to PASCAL VOC style instance and class
         segmentations. Additionaly, it creates a segmentation mask(1d ndarray) with every pixel contatining the id of
         the instance that the pixel belongs to.
@@ -19,7 +19,7 @@ def coco2voc(annotations_file, target_folder, n=None, compress=True):
     '.npy'
     :return: All segmentations are saved to the target folder, along with a list of ids of the images that were
     converted
-    '''
+    """
 
     coco_instance = COCO(annotations_file)
     coco_imgs = coco_instance.imgs

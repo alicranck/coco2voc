@@ -3,13 +3,13 @@ from pycocotools import mask as maskUtils
 
 
 def anns_to_seg(annotations, coco_instance):
-    '''
+    """
     converts COCO-format annotations of a given image to a PASCAL-VOC segmentation style label
      !!!No guarantees where segmentations overlap - might lead to loss of objects!!!
     :param annotations: COCO annotations as returned by 'coco.loadAnns'
     :param coco_instance: an instance of the COCO class from pycocotools
     :return: three 2D numpy arrays where the value of each pixel is the class id, instance number, and instance id.
-    '''
+    """
     image_details = coco_instance.loadImgs(annotations[0]['image_id'])[0]
 
     h = image_details['height']
